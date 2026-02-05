@@ -19,7 +19,6 @@ df.rename(columns={"Pclass": "PassengerClass"}, inplace=True)
 df["Sex"] = df["Sex"].map({0: "Male", 1: "Female"})
 df["PassengerClass"] = df["PassengerClass"].map({1:"First Class",2:"Second class",3:"Third class"})
 df["Survived"] = df["Survived"].map({0: "Not Survived", 1: "Survived"})
-
 df["Embarked"] = df["Embarked"].map({
     0: "Cherbourg",
     1: "Queenstown",

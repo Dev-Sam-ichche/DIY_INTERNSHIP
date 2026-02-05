@@ -1,28 +1,95 @@
 import streamlit as st
 import pandas as pd
 
-st.title("DIY Internship Task 1")
-st.subheader("Dataset Loading & Preprocessing using Pandas")
+# page setup
+st.set_page_config(
+    page_title="DIY Internship Task 6",
+    layout="wide"
+)
 
-# Load dataset
-data = "Data/train_and_test2.csv"
-df = pd.read_csv(data)
+# custom CSS
+st.markdown(
+    """
+    <style>
+    .main {
+        background-color: #f7f9fc;
+    }
+    h1, h2, h3 {
+        color: #1f2937;
+    }
+    .metric-container {
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-st.write("Raw Dataset")
-st.dataframe(df)
+# title
+st.title("DIY Internship – Task 6")
+st.subheader("Improved UI with CSS & Better Layout")
 
-# Preprocessing
-st.write("Preprocessing Steps")
+# load data
+df = pd.read_csv("Data/train_and_test2.csv")
 
-# 1. Check missing values
-missing = df.isnull().sum()
-st.write("Missing Values:", missing)
+# fix column names
+df.rename(
+    columns={
+        "2urvived": "Survived",
+        "Pclass": "PassengerClass"
+    },
+    inplace=True
+)
 
-# 2. Rename columns
-df.columns = [col.replace("_", " ").title() for col in df.columns]
+# decode columns
+df["Sex"] = df["Sex"].map({0: "Male", 1: "Female"})
+df["Survived"] = df["Survived"].map({0: "Not Survived", 1: "Survived"})
 
-# 3. Basic statistics
-st.write("Dataset Statistics")
-st.write(df.describe())
+# family status
+df["Family Status"] = df["sibsp"].apply(
+    lambda x: "With Family" if x > 0 else "Alone"
+)
 
-st.success("Dataset loaded and preprocessed successfully")
+# sidebar
+st.sidebar.header("Filters")
+gender = st.sidebar.selectbox("Gender", ["All"] + df["Sex"].unique().tolist())
+
+# filter data
+filtered_df = df.copy()
+if gender != "All":
+    filtered_df = filtered_df[filtered_df["Sex"] == gender]
+
+# metrics
+st.write("### Key Metrics")
+
+c1, c2, c3 = st.columns(3)
+
+with c1:
+    st.metric("Total Passengers", filtered_df.shape[0])
+
+with c2:
+    st.metric("Male", (filtered_df["Sex"] == "Male").sum())
+
+with c3:
+    st.metric("Female", (filtered_df["Sex"] == "Female").sum())
+
+# charts
+st.write("### Visual Analysis")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.write("Passenger Class Distribution")
+    st.bar_chart(filtered_df["PassengerClass"].value_counts().sort_index())
+
+with col2:
+    st.write("Survival Status")
+    st.bar_chart(filtered_df["Survived"].value_counts())
+
+st.write("Family Status")
+st.bar_chart(filtered_df["Family Status"].value_counts())
+
+st.success("Task 6 completed: improved visual appeal and usability")
