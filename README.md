@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # DIY Internship – Interactive Data Dashboard
 
 This project is part of the **DIY Internship Program**.  
@@ -21,4 +20,3 @@ It demonstrates an end-to-end **Streamlit dashboard** built using Python and Pan
 - Python
 - Pandas
 - Streamlit
-=======
