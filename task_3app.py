@@ -1,108 +1,110 @@
 import streamlit as st
 import pandas as pd
 
-# page setup
-st.set_page_config(page_title="DIY Internship Task 3", layout="wide")
 
-st.title("DIY Internship – Task 3")
-st.subheader("Interactive Data Dashboard")
+def task3():
+    # page setup
+    st.set_page_config(page_title="DIY Internship Task 3", layout="wide")
 
-# load data
-df = pd.read_csv("Data/train_and_test2.csv")
+    st.title("DIY Internship – Task 3")
+    st.subheader("Interactive Data Dashboard")
 
-# fix column names
-df.rename(
-    columns={
-        "2urvived": "Survived",
-        "Pclass": "PassengerClass"
-    },
-    inplace=True
-)
+    # load data
+    df = pd.read_csv("Data/train_and_test2.csv")
 
-# decode columns
-df["Sex"] = df["Sex"].map({0: "Male", 1: "Female"})
-df["Survived"] = df["Survived"].map({0: "Not Survived", 1: "Survived"})
-df["Embarked"] = df["Embarked"].map({
-    0: "Cherbourg",
-    1: "Queenstown",
-    2: "Southampton"
-})
+    # fix column names
+    df.rename(
+        columns={
+            "2urvived": "Survived",
+            "Pclass": "PassengerClass"
+        },
+        inplace=True
+    )
 
-# family status
-df["Family Status"] = df["sibsp"].apply(
-    lambda x: "With Family" if x > 0 else "Alone"
-)
+    # decode columns
+    df["Sex"] = df["Sex"].map({0: "Male", 1: "Female"})
+    df["Survived"] = df["Survived"].map({0: "Not Survived", 1: "Survived"})
+    df["Embarked"] = df["Embarked"].map({
+        0: "Cherbourg",
+        1: "Queenstown",
+        2: "Southampton"
+    })
 
-st.sidebar.header("Filter Data")
+    # family status
+    df["Family Status"] = df["sibsp"].apply(
+        lambda x: "With Family" if x > 0 else "Alone"
+    )
 
-# dropdown: gender
-gender_option = st.sidebar.selectbox(
-    "Select Gender",
-    options=["All"] + df["Sex"].unique().tolist()
-)
+    st.sidebar.header("Filter Data")
 
-# dropdown: survival
-survival_option = st.sidebar.selectbox(
-    "Survival Status",
-    options=["All"] + df["Survived"].unique().tolist()
-)
+    # dropdown: gender
+    gender_option = st.sidebar.selectbox(
+        "Select Gender",
+        options=["All"] + df["Sex"].unique().tolist()
+    )
 
-# slider: age range
-age_min, age_max = int(df["Age"].min()), int(df["Age"].max())
-age_range = st.sidebar.slider(
-    "Select Age Range",
-    min_value=age_min,
-    max_value=age_max,
-    value=(age_min, age_max)
-)
+    # dropdown: survival
+    survival_option = st.sidebar.selectbox(
+        "Survival Status",
+        options=["All"] + df["Survived"].unique().tolist()
+    )
 
-# input field: minimum fare
-min_fare = st.sidebar.number_input(
-    "Minimum Fare",
-    min_value=0.0,
-    value=0.0
-)
+    # slider: age range
+    age_min, age_max = int(df["Age"].min()), int(df["Age"].max())
+    age_range = st.sidebar.slider(
+        "Select Age Range",
+        min_value=age_min,
+        max_value=age_max,
+        value=(age_min, age_max)
+    )
 
-filtered_df = df.copy()
+    # input field: minimum fare
+    min_fare = st.sidebar.number_input(
+        "Minimum Fare",
+        min_value=0.0,
+        value=0.0
+    )
 
-if gender_option != "All":
-    filtered_df = filtered_df[filtered_df["Sex"] == gender_option]
+    filtered_df = df.copy()
 
-if survival_option != "All":
-    filtered_df = filtered_df[filtered_df["Survived"] == survival_option]
+    if gender_option != "All":
+        filtered_df = filtered_df[filtered_df["Sex"] == gender_option]
 
-filtered_df = filtered_df[
-    (filtered_df["Age"] >= age_range[0]) &
-    (filtered_df["Age"] <= age_range[1]) &
-    (filtered_df["Fare"] >= min_fare)
-]
+    if survival_option != "All":
+        filtered_df = filtered_df[filtered_df["Survived"] == survival_option]
 
-st.write("### Filtered Data Preview")
-st.dataframe(filtered_df.head(10))
+    filtered_df = filtered_df[
+        (filtered_df["Age"] >= age_range[0]) &
+        (filtered_df["Age"] <= age_range[1]) &
+        (filtered_df["Fare"] >= min_fare)
+    ]
 
-# metrics
-st.write("### Key Metrics")
+    st.write("### Filtered Data Preview")
+    st.dataframe(filtered_df.head(10))
 
-c1, c2, c3 = st.columns(3)
+    # metrics
+    st.write("### Key Metrics")
 
-c1.metric("Total Passengers", filtered_df.shape[0])
-c2.metric("Male", (filtered_df["Sex"] == "Male").sum())
-c3.metric("Female", (filtered_df["Sex"] == "Female").sum())
+    c1, c2, c3 = st.columns(3)
 
-# charts
-st.write("### Visual Analysis")
+    c1.metric("Total Passengers", filtered_df.shape[0])
+    c2.metric("Male", (filtered_df["Sex"] == "Male").sum())
+    c3.metric("Female", (filtered_df["Sex"] == "Female").sum())
 
-col1, col2 = st.columns(2)
+    # charts
+    st.write("### Visual Analysis")
 
-with col1:
-    st.write("Passenger Class")
-    st.bar_chart(filtered_df["PassengerClass"].value_counts().sort_index())
+    col1, col2 = st.columns(2)
 
-with col2:
-    st.write("Family Status")
-    st.bar_chart(filtered_df["Family Status"].value_counts())
+    with col1:
+        st.write("Passenger Class")
+        st.bar_chart(filtered_df["PassengerClass"].value_counts().sort_index())
 
-st.write("Survival Status")
-st.bar_chart(filtered_df["Survived"].value_counts())
+    with col2:
+        st.write("Family Status")
+        st.bar_chart(filtered_df["Family Status"].value_counts())
 
-st.success("Task 3 interactive dashboard done")
+    st.write("Survival Status")
+    st.bar_chart(filtered_df["Survived"].value_counts())
+
+    st.success("Task 3 interactive dashboard done")

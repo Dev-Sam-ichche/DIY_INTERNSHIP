@@ -22,7 +22,3 @@ It demonstrates an end-to-end **Streamlit dashboard** built using Python and Pan
 - Pandas
 - Streamlit
 =======
-# DIY Internship Task 
-Task 1 :dataset loading and preprocessing 
-Task 2: dashboard with clean columns and analysis
->>>>>>> 6574e3cb22339a422e70514c72d91bd11afbed0f
