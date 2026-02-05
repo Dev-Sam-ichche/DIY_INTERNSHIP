@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # DIY Internship – Interactive Data Dashboard
 
 This project is part of the **DIY Internship Program**.  
